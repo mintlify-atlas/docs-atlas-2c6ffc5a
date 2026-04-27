@@ -1,28 +1,11 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "name": "API Wilayah Indonesia",
+  "projectType": "api-service",
+  "projectName": "API Wilayah Indonesia",
+  "projectDescription": "A static REST API providing hierarchical administrative region data for Indonesia (provinces, regencies, districts, and villages), hosted via GitHub Pages.",
   "theme": "luma",
-  "colors": {
-    "primary": "#4f595a",
-    "light": "#2f4646",
-    "dark": "#bfc5c6"
-  },
-  "favicon": "https://media.brand.dev/f83efefc-8f43-4e26-9704-f1a0cbe9d010.jpg",
-  "logo": {
-    "light": "https://media.brand.dev/89ea950d-98e3-4330-866d-0c9f8858e6a7.svg",
-    "dark": "https://media.brand.dev/89ea950d-98e3-4330-866d-0c9f8858e6a7.svg"
-  },
-  "navbar": {
-    "primary": {
-      "type": "github",
-      "href": "https://github.com/emsifa/api-wilayah-indonesia"
-    }
-  },
-  "footer": {
-    "socials": {
-      "github": "https://github.com/emsifa/api-wilayah-indonesia"
-    }
-  },
+  "primaryColor": "#4f595a",
+  "lightColor": "#2f4646",
+  "darkColor": "#bfc5c6",
   "navigation": {
     "tabs": [
       {
@@ -80,5 +63,23 @@
         ]
       }
     ]
-  }
+  },
+  "keyFeatures": [
+    "Fully static REST API — no server-side runtime required",
+    "Complete hierarchical data: provinces → regencies → districts → villages",
+    "Hosted on GitHub Pages — free, reliable, globally available",
+    "PHP-based generator that converts CSV data files into thousands of JSON endpoints",
+    "Fork-and-deploy model for self-hosting on your own GitHub account",
+    "Approximately 100 million requests/month capacity via GitHub Pages bandwidth"
+  ],
+  "publicApiSurface": [
+    "GET /api/provinces.json",
+    "GET /api/province/{provinceId}.json",
+    "GET /api/regencies/{provinceId}.json",
+    "GET /api/regency/{regencyId}.json",
+    "GET /api/districts/{regencyId}.json",
+    "GET /api/district/{districtId}.json",
+    "GET /api/villages/{districtId}.json",
+    "GET /api/village/{villageId}.json"
+  ]
 }

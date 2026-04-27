@@ -1,0 +1,49 @@
+---
+title: "API Wilayah Indonesia: Static REST API for Indonesia"
+description: "API Wilayah Indonesia provides free, static JSON endpoints for all Indonesian provinces, regencies, districts, and villages — no API key required."
+---
+
+API Wilayah Indonesia is a fully static REST API that serves complete administrative region data for Indonesia across four hierarchical levels: provinces (provinsi), regencies/cities (kabupaten/kota), districts (kecamatan), and villages (kelurahan/desa). Because the API is made up of pre-generated JSON files hosted on GitHub Pages, there is no authentication, no rate-limit complexity, and no server to maintain — just plain HTTP GET requests returning JSON.
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Make your first API call and start fetching Indonesian region data in minutes.
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/list-provinces">
+    Explore all eight endpoints covering provinces, regencies, districts, and villages.
+  </Card>
+  <Card title="Data Model" icon="diagram-project" href="/guides/data-model">
+    Understand the hierarchical structure and ID scheme used across all data levels.
+  </Card>
+  <Card title="Self-Hosting" icon="server" href="/self-hosting">
+    Fork and deploy your own copy to avoid shared bandwidth limits.
+  </Card>
+</CardGroup>
+
+## How it works
+
+The API is built from CSV data files that are compiled into thousands of static JSON endpoint files using a PHP generator script. Those files are then deployed to GitHub Pages, where they are served directly as HTTP responses. There is no database, no backend server, and no runtime processing — every endpoint is a plain `.json` file.
+
+<Steps>
+  <Step title="Browse region data">
+    Start by fetching the list of all provinces from `/api/provinces.json`.
+  </Step>
+  <Step title="Drill down the hierarchy">
+    Use the province ID to fetch its regencies, then use the regency ID to fetch districts, and so on.
+  </Step>
+  <Step title="Fetch individual records">
+    Use single-record endpoints like `/api/province/{id}.json` to retrieve details for a specific region.
+  </Step>
+</Steps>
+
+## Key features
+
+- **No authentication** — all endpoints are public and require no API keys or tokens
+- **Fully static** — endpoints are pre-generated JSON files, served at CDN speed
+- **Complete data** — covers all 34 provinces, hundreds of regencies, thousands of districts, and tens of thousands of villages
+- **Self-hostable** — fork the repository and deploy to your own GitHub Pages for dedicated bandwidth
+- **~100 million requests/month** — GitHub Pages provides 100 GB/month of bandwidth; with ~1 KB per endpoint that equals roughly 100 million requests per month
+
+<Info>
+  The live API is hosted at `https://emsifa.github.io/api-wilayah-indonesia`. If you need higher request limits, follow the [self-hosting guide](/self-hosting) to deploy your own copy.
+</Info>

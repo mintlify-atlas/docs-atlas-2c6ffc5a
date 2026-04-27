@@ -1,0 +1,76 @@
+---
+title: "GET /api/village/{id}.json — fetch one village"
+description: "Fetch a single kelurahan or desa (village) by its ten-digit ID. Returns id, district_id, and name as a JSON object. No auth required."
+---
+
+This endpoint retrieves a single village record when you already know its ten-digit ID. Villages (kelurahan/desa) are the most granular administrative unit in the data — one level below districts — so there are no further child resources to traverse once you have a village record.
+
+## Endpoint
+
+```
+GET https://emsifa.github.io/api-wilayah-indonesia/api/village/{villageId}.json
+```
+
+## Path parameters
+
+<ParamField path="villageId" type="string" required>
+  Ten-digit numeric code uniquely identifying the village. For example, `1103011010` is the ID for Jambo Dalem. The first seven digits encode the parent district. If you do not know the village ID, use the [list villages](/api-reference/list-villages) endpoint to look it up for a given district.
+</ParamField>
+
+## Response fields
+
+<ResponseField name="id" type="string" required>
+  Ten-digit numeric code uniquely identifying the village.
+</ResponseField>
+
+<ResponseField name="district_id" type="string" required>
+  Seven-digit numeric code of the parent district that this village belongs to.
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  Village name in uppercase, as registered in official administrative records.
+</ResponseField>
+
+## Example
+
+Request the village with ID **1103011010** (Jambo Dalem):
+
+```
+GET https://emsifa.github.io/api-wilayah-indonesia/api/village/1103011010.json
+```
+
+Example response:
+
+```json
+{
+  "id": "1103011010",
+  "district_id": "1103011",
+  "name": "JAMBO DALEM"
+}
+```
+
+## Code examples
+
+<CodeGroup>
+
+```bash cURL
+curl https://emsifa.github.io/api-wilayah-indonesia/api/village/1103011010.json
+```
+
+```javascript JavaScript
+const villageId = '1103011010';
+
+const response = await fetch(
+  `https://emsifa.github.io/api-wilayah-indonesia/api/village/${villageId}.json`
+);
+const village = await response.json();
+
+console.log(village);
+// { id: '1103011010', district_id: '1103011', name: 'JAMBO DALEM' }
+```
+
+</CodeGroup>
+
+<Tip>
+  If you do not have a village ID yet, call the [list villages](/api-reference/list-villages) endpoint with a district ID first. It returns all villages within that district, including their ten-digit IDs, which you can then pass to this endpoint.
+</Tip>

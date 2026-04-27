@@ -1,0 +1,85 @@
+---
+title: "GET /api/villages/{districtId}.json — list villages"
+description: "List all kelurahan and desa (villages) within an Indonesian district. Returns a JSON array with id, district_id, and uppercase village names."
+---
+
+This endpoint returns all villages (kelurahan/desa) belonging to a specific district. You must supply a valid district ID, which you can obtain from the [list districts](/api-reference/list-districts) endpoint. Villages are the most granular administrative unit in the hierarchy — they sit one level below districts and have no sub-entities of their own.
+
+## Endpoint
+
+```
+GET https://emsifa.github.io/api-wilayah-indonesia/api/villages/{districtId}.json
+```
+
+## Path parameters
+
+<ParamField path="districtId" type="string" required>
+  Seven-digit numeric code identifying the district whose villages you want to retrieve. For example, `1103010` is the ID for Trumon district in Aceh Selatan regency. You can find district IDs by calling the list-districts endpoint for a given regency.
+</ParamField>
+
+## Response fields
+
+Each item in the returned array contains the following fields.
+
+<ResponseField name="id" type="string" required>
+  Ten-digit numeric code uniquely identifying the village. The first seven digits match the parent `district_id`.
+</ResponseField>
+
+<ResponseField name="district_id" type="string" required>
+  Seven-digit numeric code of the parent district.
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  Village name in uppercase, as registered in official administrative records.
+</ResponseField>
+
+## Example
+
+Request all villages in district **1103010** (Trumon, Aceh Selatan):
+
+```
+GET https://emsifa.github.io/api-wilayah-indonesia/api/villages/1103010.json
+```
+
+Example response:
+
+```json
+[
+  {
+    "id": "1103010001",
+    "district_id": "1103010",
+    "name": "KUTA PADANG"
+  },
+  {
+    "id": "1103010002",
+    "district_id": "1103010",
+    "name": "RAKET"
+  }
+]
+```
+
+## Code examples
+
+<CodeGroup>
+
+```bash cURL
+curl https://emsifa.github.io/api-wilayah-indonesia/api/villages/1103010.json
+```
+
+```javascript JavaScript
+const districtId = '1103010';
+
+const response = await fetch(
+  `https://emsifa.github.io/api-wilayah-indonesia/api/villages/${districtId}.json`
+);
+const villages = await response.json();
+
+console.log(villages);
+// [{ id: '1103010001', district_id: '1103010', name: 'KUTA PADANG' }, ...]
+```
+
+</CodeGroup>
+
+<Note>
+  Villages are the lowest level in the administrative hierarchy. There are no sub-entities to fetch from a village record. If you need details for a single village, use the [get village](/api-reference/get-village) endpoint with its ten-digit ID.
+</Note>

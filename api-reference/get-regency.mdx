@@ -1,0 +1,66 @@
+---
+title: "GET /api/regency/{id}.json — fetch one regency"
+description: "Fetch a single Indonesian kabupaten or kota by its four-digit ID. Returns id, province_id, and name as a JSON object. No auth required."
+---
+
+This endpoint retrieves a single regency or city record when you already know its four-digit ID. Use it to look up a specific kabupaten or kota directly, without fetching the full list for a province.
+
+```
+GET https://emsifa.github.io/api-wilayah-indonesia/api/regency/{regencyId}.json
+```
+
+## Path parameters
+
+<ParamField path="regencyId" type="string" required>
+  The four-digit numeric code identifying the regency or city. For example, `"1103"` for Kabupaten Aceh Selatan. The first two digits correspond to the parent province ID.
+</ParamField>
+
+## Response fields
+
+<ResponseField name="id" type="string">
+  Four-digit numeric regency code that uniquely identifies the regency or city.
+</ResponseField>
+
+<ResponseField name="province_id" type="string">
+  The two-digit ID of the parent province.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Regency or city name in uppercase, prefixed with `KABUPATEN` or `KOTA`.
+</ResponseField>
+
+## Example
+
+Fetch the record for Kabupaten Aceh Selatan (regency ID `1103`):
+
+```
+GET https://emsifa.github.io/api-wilayah-indonesia/api/regency/1103.json
+```
+
+**Response:**
+
+```json
+{ "id": "1103", "province_id": "11", "name": "KABUPATEN ACEH SELATAN" }
+```
+
+## Code examples
+
+<CodeGroup>
+
+```bash cURL
+curl https://emsifa.github.io/api-wilayah-indonesia/api/regency/1103.json
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://emsifa.github.io/api-wilayah-indonesia/api/regency/1103.json'
+);
+const regency = await response.json();
+console.log(regency);
+```
+
+</CodeGroup>
+
+<Tip>
+  If you don't know the regency ID, use the [list regencies](/api-reference/list-regencies) endpoint with a province ID to browse all regencies and cities in that province.
+</Tip>

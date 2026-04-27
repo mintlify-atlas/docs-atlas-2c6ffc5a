@@ -1,0 +1,58 @@
+---
+title: "GET /api/provinces.json — list all provinces"
+description: "Retrieve all 34 Indonesian provinces as a JSON array. Each object contains a numeric string ID and an uppercase name field. No auth required."
+---
+
+This endpoint returns the complete list of all 34 Indonesian provinces. It is typically the starting point for traversing the regional hierarchy — use the province `id` values returned here to query regencies, districts, and villages deeper in the hierarchy.
+
+```
+GET https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json
+```
+
+## Parameters
+
+This endpoint has no parameters.
+
+## Response fields
+
+<ResponseField name="id" type="string" required>
+  Two-digit numeric string that uniquely identifies the province (e.g., `"11"` for Aceh, `"32"` for Jawa Barat).
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  Province name in uppercase (e.g., `"ACEH"`, `"SUMATERA UTARA"`).
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+
+```bash curl
+curl https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json'
+);
+const provinces = await response.json();
+console.log(provinces);
+```
+
+</CodeGroup>
+
+## Example response
+
+```json
+[
+  { "id": "11", "name": "ACEH" },
+  { "id": "12", "name": "SUMATERA UTARA" },
+  { "id": "13", "name": "SUMATERA BARAT" },
+  { "id": "14", "name": "RIAU" },
+  { "id": "15", "name": "JAMBI" }
+]
+```
+
+<Note>
+  This endpoint is the entry point for the full regional hierarchy. Pass any province `id` to `/api/regencies/{provinceId}.json` to list its regencies, or to `/api/province/{provinceId}.json` to fetch a single province record.
+</Note>

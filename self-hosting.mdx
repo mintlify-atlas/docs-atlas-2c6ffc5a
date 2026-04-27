@@ -1,0 +1,58 @@
+---
+title: "Self-host the API on your GitHub account"
+description: "Deploy your own copy of API Wilayah Indonesia to GitHub Pages for dedicated bandwidth and full control over your regional data API."
+---
+
+The shared instance of API Wilayah Indonesia runs on a single GitHub Pages deployment with a bandwidth limit shared across all users. For production applications, deploying your own copy gives you dedicated bandwidth, a stable URL under your own account, and full control over updates. The process takes about 5–10 minutes and requires only a GitHub account.
+
+<Steps>
+  <Step title="Fork the repository">
+    Go to [github.com/emsifa/api-wilayah-indonesia](https://github.com/emsifa/api-wilayah-indonesia) and click **Fork** in the top-right corner.
+
+    On the fork creation page, fill in your repository name (or leave it as `api-wilayah-indonesia`), then locate the **"Copy the master branch only"** checkbox.
+
+    <Warning>
+      You must **uncheck "Copy the master branch only"** before creating the fork. The pre-built API files are stored on the `gh-pages` branch — if you copy only `master`, the branch that GitHub Pages will serve will be missing and your deployment will fail.
+    </Warning>
+
+    Click **Create Fork** to proceed.
+  </Step>
+
+  <Step title="Open the Pages settings in your fork">
+    After the fork is created, navigate to your forked repository at `https://github.com/{your-username}/api-wilayah-indonesia`.
+
+    Click **Settings** in the repository navigation bar (this is the repository settings, not your account settings), then click **Pages** in the left sidebar.
+  </Step>
+
+  <Step title="Configure GitHub Pages">
+    In the Pages settings, configure the following options and then click **Save**:
+
+    | Setting | Value |
+    | --- | --- |
+    | Source | Deploy from a branch |
+    | Branch | `gh-pages` |
+    | Directory | `/root` |
+  </Step>
+
+  <Step title="Wait for the deployment to complete">
+    Return to the home page of your forked repository. GitHub needs a few minutes to build and publish the site.
+
+    After 5–10 minutes, an **Environments** section will appear in the right sidebar of the repository home page. If it does not appear yet, wait a moment and refresh the page.
+  </Step>
+
+  <Step title="View your live deployment">
+    In the **Environments** section of the sidebar, click **github-pages**.
+
+    On the Deployments page, click **View Deployment** to open your live API in the browser. Your API is now available at:
+
+    ```
+    https://{your-username}.github.io/api-wilayah-indonesia/api/provinces.json
+    ```
+
+    Replace `{your-username}` with your GitHub username. You can use this base URL in place of the shared instance across all endpoints.
+  </Step>
+</Steps>
+
+<Info>
+  GitHub Pages provides 100 GB of bandwidth per month. Because each API endpoint file is approximately 1 KB, this translates to roughly 100 million requests per month — or about 3 million requests per day — before you reach the limit. For most applications this is more than sufficient. For details on all GitHub Pages constraints, see the [limitations guide](/guides/limitations).
+</Info>

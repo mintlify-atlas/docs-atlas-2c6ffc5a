@@ -1,81 +1,141 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
-icon: 'rocket'
+title: "Get started with API Wilayah Indonesia"
+description: "Learn how to fetch Indonesian region data — provinces, regencies, districts, and villages — using simple GET requests in under 5 minutes."
 ---
 
-## Get started in three steps
-
-Get your documentation site running locally and make your first customization.
-
-### Step 1: Set up your local environment
-
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
+This page walks you through making your first API call and traversing the full Indonesian regional hierarchy — from province down to village — in just a few steps. The API requires no setup, no account, and no API key.
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  No API key or authentication is required. All endpoints are public and respond to plain GET requests.
 </Note>
+
+<Steps>
+  <Step title="Fetch the list of provinces">
+    Start by requesting all 34 Indonesian provinces. Each province has an `id` and a `name`.
+
+    <CodeGroup>
+
+    ```bash curl
+    curl https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json
+    ```
+
+    ```javascript JavaScript
+    const response = await fetch(
+      'https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json'
+    );
+    const provinces = await response.json();
+    console.log(provinces);
+    ```
+
+    </CodeGroup>
+
+    Example response:
+
+    ```json
+    [
+      { "id": "11", "name": "ACEH" },
+      { "id": "12", "name": "SUMATERA UTARA" }
+    ]
+    ```
+
+    Pick a province `id` from the response — you will use it in the next step. This guide uses Aceh (`id: "11"`).
+  </Step>
+
+  <Step title="Fetch regencies for a province">
+    Use the province ID to fetch all regencies (kabupaten/kota) within it. Replace `{provinceId}` with the ID from the previous step.
+
+    <CodeGroup>
+
+    ```bash curl
+    curl https://emsifa.github.io/api-wilayah-indonesia/api/regencies/11.json
+    ```
+
+    ```javascript JavaScript
+    const provinceId = '11';
+    const response = await fetch(
+      `https://emsifa.github.io/api-wilayah-indonesia/api/regencies/${provinceId}.json`
+    );
+    const regencies = await response.json();
+    console.log(regencies);
+    ```
+
+    </CodeGroup>
+
+    Example response:
+
+    ```json
+    [
+      { "id": "1101", "province_id": "11", "name": "KABUPATEN SIMEULUE" },
+      { "id": "1102", "province_id": "11", "name": "KABUPATEN ACEH SINGKIL" }
+    ]
+    ```
+
+    Note the `id` of a regency to continue drilling down. This guide uses Aceh Selatan (`id: "1103"`).
+  </Step>
+
+  <Step title="Fetch districts for a regency">
+    Use the regency ID to fetch all districts (kecamatan) within it.
+
+    <CodeGroup>
+
+    ```bash curl
+    curl https://emsifa.github.io/api-wilayah-indonesia/api/districts/1103.json
+    ```
+
+    ```javascript JavaScript
+    const regencyId = '1103';
+    const response = await fetch(
+      `https://emsifa.github.io/api-wilayah-indonesia/api/districts/${regencyId}.json`
+    );
+    const districts = await response.json();
+    console.log(districts);
+    ```
+
+    </CodeGroup>
+
+    Example response:
+
+    ```json
+    [
+      { "id": "1103010", "regency_id": "1103", "name": "TRUMON" },
+      { "id": "1103011", "regency_id": "1103", "name": "TRUMON TIMUR" }
+    ]
+    ```
+  </Step>
+
+  <Step title="Fetch villages for a district">
+    Use the district ID to fetch all villages (kelurahan/desa) within it. This is the deepest level of the hierarchy.
+
+    <CodeGroup>
+
+    ```bash curl
+    curl https://emsifa.github.io/api-wilayah-indonesia/api/villages/1103010.json
+    ```
+
+    ```javascript JavaScript
+    const districtId = '1103010';
+    const response = await fetch(
+      `https://emsifa.github.io/api-wilayah-indonesia/api/villages/${districtId}.json`
+    );
+    const villages = await response.json();
+    console.log(villages);
+    ```
+
+    </CodeGroup>
+
+    Example response:
+
+    ```json
+    [
+      { "id": "1103010001", "district_id": "1103010", "name": "KUTA PADANG" },
+      { "id": "1103010002", "district_id": "1103010", "name": "RAKET" }
+    ]
+    ```
+
+    You have now traversed the full four-level hierarchy: province → regency → district → village.
+  </Step>
+</Steps>
+
+<Tip>
+  For production use, deploy your own copy of the API to avoid sharing bandwidth with other users. Follow the [self-hosting guide](/self-hosting) to fork and deploy to your own GitHub Pages in a few minutes.
+</Tip>

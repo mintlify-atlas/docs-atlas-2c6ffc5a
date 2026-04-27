@@ -1,0 +1,66 @@
+---
+title: 'GET /api/districts/{regencyId}.json — list districts'
+description: 'List all kecamatan (districts) within an Indonesian regency. Returns a JSON array with id, regency_id, and uppercase district names.'
+---
+
+This endpoint returns all districts (kecamatan) within a specific regency or city (kabupaten/kota). You must supply a valid regency ID, which you can obtain from the [list regencies](/api-reference/list-regencies) endpoint.
+
+```
+GET https://emsifa.github.io/api-wilayah-indonesia/api/districts/{regencyId}.json
+```
+
+## Path parameters
+
+<ParamField path="regencyId" type="string" required>
+  Four-digit numeric code that identifies the regency or city. For example, `1103` refers to Aceh Selatan. Obtain valid IDs from the list regencies endpoint.
+</ParamField>
+
+## Response
+
+The endpoint returns a JSON array. Each element represents one district within the requested regency.
+
+<ResponseField name="id" type="string">
+  Seven-digit numeric district code. The first four digits match the parent `regency_id`.
+</ResponseField>
+
+<ResponseField name="regency_id" type="string">
+  Four-digit code of the parent regency or city.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  District name in uppercase.
+</ResponseField>
+
+## Example
+
+Fetch all districts in Aceh Selatan (regency ID `1103`):
+
+```
+GET https://emsifa.github.io/api-wilayah-indonesia/api/districts/1103.json
+```
+
+```json Response
+[
+  { "id": "1103010", "regency_id": "1103", "name": "TRUMON" },
+  { "id": "1103011", "regency_id": "1103", "name": "TRUMON TIMUR" }
+]
+```
+
+## Code examples
+
+<CodeGroup>
+
+```bash cURL
+curl --request GET \
+  --url "https://emsifa.github.io/api-wilayah-indonesia/api/districts/1103.json"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://emsifa.github.io/api-wilayah-indonesia/api/districts/1103.json'
+);
+const districts = await response.json();
+console.log(districts);
+```
+
+</CodeGroup>

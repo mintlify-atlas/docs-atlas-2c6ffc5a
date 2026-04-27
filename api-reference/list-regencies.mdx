@@ -1,0 +1,70 @@
+---
+title: "GET /api/regencies/{provinceId}.json — list regencies"
+description: "List all kabupaten (regencies) and kota (cities) within an Indonesian province. Returns a JSON array with id, province_id, and name fields."
+---
+
+This endpoint returns all regencies (kabupaten) and cities (kota) that belong to a given province. To use it, you need a valid province ID, which you can obtain from the [list provinces](/api-reference/list-provinces) endpoint.
+
+```
+GET https://emsifa.github.io/api-wilayah-indonesia/api/regencies/{provinceId}.json
+```
+
+## Path parameters
+
+<ParamField path="provinceId" type="string" required>
+  The two-digit numeric code identifying the province. For example, `"11"` for Aceh. Obtain valid province IDs from the `/api/provinces.json` endpoint.
+</ParamField>
+
+## Response fields
+
+<ResponseField name="id" type="string">
+  Four-digit numeric regency code. The first two digits match the parent `province_id`. For example, `"1101"` belongs to province `"11"`.
+</ResponseField>
+
+<ResponseField name="province_id" type="string">
+  The two-digit ID of the parent province.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Regency or city name in uppercase. Prefixed with `KABUPATEN` for regencies or `KOTA` for cities.
+</ResponseField>
+
+## Example
+
+Fetch all regencies and cities in Aceh (province ID `11`):
+
+```
+GET https://emsifa.github.io/api-wilayah-indonesia/api/regencies/11.json
+```
+
+**Response:**
+
+```json
+[
+  { "id": "1101", "province_id": "11", "name": "KABUPATEN SIMEULUE" },
+  { "id": "1102", "province_id": "11", "name": "KABUPATEN ACEH SINGKIL" },
+  { "id": "1103", "province_id": "11", "name": "KABUPATEN ACEH SELATAN" }
+]
+```
+
+## Code examples
+
+<CodeGroup>
+
+```bash cURL
+curl https://emsifa.github.io/api-wilayah-indonesia/api/regencies/11.json
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://emsifa.github.io/api-wilayah-indonesia/api/regencies/11.json'
+);
+const regencies = await response.json();
+console.log(regencies);
+```
+
+</CodeGroup>
+
+<Note>
+  Regency names are prefixed with `KABUPATEN` (for kabupaten/regencies) or `KOTA` (for kota/cities), always in uppercase.
+</Note>

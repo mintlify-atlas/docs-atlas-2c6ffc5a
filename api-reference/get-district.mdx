@@ -1,0 +1,67 @@
+---
+title: 'GET /api/district/{id}.json — fetch one district'
+description: 'Fetch a single kecamatan (district) by its seven-digit ID. Returns id, regency_id, and name as a JSON object. No authentication required.'
+---
+
+This endpoint retrieves a single district record when you already know its ID. It is useful for looking up a district's details directly without fetching the full list for its regency.
+
+```
+GET https://emsifa.github.io/api-wilayah-indonesia/api/district/{districtId}.json
+```
+
+## Path parameters
+
+<ParamField path="districtId" type="string" required>
+  Seven-digit numeric code that identifies the district. For example, `1103011` refers to Trumon Timur. Use the [list districts](/api-reference/list-districts) endpoint to find valid IDs for a given regency.
+</ParamField>
+
+## Response
+
+The endpoint returns a single JSON object representing the requested district.
+
+<ResponseField name="id" type="string">
+  Seven-digit numeric district code.
+</ResponseField>
+
+<ResponseField name="regency_id" type="string">
+  Four-digit code of the parent regency or city.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  District name in uppercase.
+</ResponseField>
+
+## Example
+
+Fetch district Trumon Timur (ID `1103011`):
+
+```
+GET https://emsifa.github.io/api-wilayah-indonesia/api/district/1103011.json
+```
+
+```json Response
+{ "id": "1103011", "regency_id": "1103", "name": "TRUMON TIMUR" }
+```
+
+## Code examples
+
+<CodeGroup>
+
+```bash cURL
+curl --request GET \
+  --url "https://emsifa.github.io/api-wilayah-indonesia/api/district/1103011.json"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://emsifa.github.io/api-wilayah-indonesia/api/district/1103011.json'
+);
+const district = await response.json();
+console.log(district);
+```
+
+</CodeGroup>
+
+<Tip>
+  If you do not have a district ID, use the [list districts](/api-reference/list-districts) endpoint with the parent regency ID to retrieve all valid district IDs for that regency.
+</Tip>

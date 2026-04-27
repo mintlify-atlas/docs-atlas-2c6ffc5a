@@ -1,0 +1,103 @@
+---
+title: "Indonesian region data model and hierarchy"
+description: "Understand the four-level hierarchical data model — provinces, regencies, districts, and villages — and the numeric ID scheme used by the API."
+---
+
+The API organizes Indonesia's administrative geography into a strict four-level hierarchy that mirrors the official structure used by the Indonesian government. Every region belongs to exactly one parent at the level above it, and you navigate downward by passing the parent's ID to the next endpoint.
+
+## Hierarchy
+
+```
+Province (Provinsi)
+└── Regency / City (Kabupaten / Kota)
+    └── District (Kecamatan)
+        └── Village / Sub-district (Kelurahan / Desa)
+```
+
+Each level is identified by a numeric string ID whose length encodes the level, making it straightforward to infer a region's place in the tree from its ID alone.
+
+## ID scheme
+
+| Level    | Digits | Example      | Meaning                                   |
+|----------|--------|--------------|-------------------------------------------|
+| Province | 2      | `11`         | Aceh                                      |
+| Regency  | 4      | `1103`       | Aceh Selatan (province `11`)              |
+| District | 7      | `1103010`    | Trumon (regency `1103`)                   |
+| Village  | 10     | `1103010001` | Kuta Padang (district `1103010`)          |
+
+The first digits of any ID are always the parent's ID. For example, regency `1103` starts with `11`, the ID of Aceh. District `1103010` starts with `1103`, the ID of Aceh Selatan. This prefix relationship holds at every level.
+
+### Concrete traversal example
+
+```
+Province  "11"         → ACEH
+Regency   "1103"       → KABUPATEN ACEH SELATAN   (parent: "11")
+District  "1103010"    → TRUMON                   (parent: "1103")
+Village   "1103010001" → KUTA PADANG              (parent: "1103010")
+```
+
+<Note>
+  All `name` values returned by the API are stored and served in **uppercase**. Normalize the casing in your UI layer if you need title-case or sentence-case output.
+</Note>
+
+## Entity reference
+
+### Province
+
+Returned by `GET /api/provinces.json` (list) and `GET /api/province/{id}.json` (single).
+
+<ResponseField name="id" type="string" required>
+  Two-digit numeric string that uniquely identifies the province (e.g., `"11"` for Aceh, `"32"` for West Java).
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  Full province name in uppercase (e.g., `"ACEH"`, `"JAWA BARAT"`).
+</ResponseField>
+
+### Regency / City
+
+Returned by `GET /api/regencies/{provinceId}.json` (list) and `GET /api/regency/{id}.json` (single).
+
+<ResponseField name="id" type="string" required>
+  Four-digit numeric string that uniquely identifies the regency or city. The first two digits match the parent province ID.
+</ResponseField>
+
+<ResponseField name="province_id" type="string" required>
+  Two-digit ID of the province this regency belongs to.
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  Full regency or city name in uppercase, including the administrative type prefix (e.g., `"KABUPATEN ACEH SELATAN"`, `"KOTA BANDA ACEH"`).
+</ResponseField>
+
+### District
+
+Returned by `GET /api/districts/{regencyId}.json` (list) and `GET /api/district/{id}.json` (single).
+
+<ResponseField name="id" type="string" required>
+  Seven-digit numeric string that uniquely identifies the district. The first four digits match the parent regency ID.
+</ResponseField>
+
+<ResponseField name="regency_id" type="string" required>
+  Four-digit ID of the regency this district belongs to.
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  Full district name in uppercase (e.g., `"TRUMON"`, `"TRUMON TIMUR"`).
+</ResponseField>
+
+### Village
+
+Returned by `GET /api/villages/{districtId}.json` (list) and `GET /api/village/{id}.json` (single).
+
+<ResponseField name="id" type="string" required>
+  Ten-digit numeric string that uniquely identifies the village. The first seven digits match the parent district ID.
+</ResponseField>
+
+<ResponseField name="district_id" type="string" required>
+  Seven-digit ID of the district this village belongs to.
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  Full village or sub-district name in uppercase (e.g., `"KUTA PADANG"`, `"RAKET"`).
+</ResponseField>

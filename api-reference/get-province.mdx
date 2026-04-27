@@ -1,0 +1,59 @@
+---
+title: "GET /api/province/{id}.json — fetch one province"
+description: "Fetch a single Indonesian province by its two-digit ID. Returns the province's id and name as a JSON object. No authentication required."
+---
+
+This endpoint retrieves a single province record when you already know its ID. It returns the same fields as each item in the list endpoint, but scoped to one province.
+
+```
+GET https://emsifa.github.io/api-wilayah-indonesia/api/province/{provinceId}.json
+```
+
+## Parameters
+
+<ParamField path="provinceId" type="string" required>
+  Two-digit numeric string identifying the province (e.g., `"11"` for Aceh). Province IDs can be discovered by calling [`GET /api/provinces.json`](/api-reference/list-provinces).
+</ParamField>
+
+## Response fields
+
+<ResponseField name="id" type="string" required>
+  Two-digit numeric string that uniquely identifies the province (e.g., `"11"`).
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  Province name in uppercase (e.g., `"ACEH"`).
+</ResponseField>
+
+## Code examples
+
+The examples below fetch province Aceh (ID `11`).
+
+<CodeGroup>
+
+```bash curl
+curl https://emsifa.github.io/api-wilayah-indonesia/api/province/11.json
+```
+
+```javascript JavaScript
+const provinceId = '11';
+const response = await fetch(
+  `https://emsifa.github.io/api-wilayah-indonesia/api/province/${provinceId}.json`
+);
+const province = await response.json();
+console.log(province);
+```
+
+</CodeGroup>
+
+## Example response
+
+Request: `GET /api/province/11.json`
+
+```json
+{ "id": "11", "name": "ACEH" }
+```
+
+<Tip>
+  If you don't have a province ID yet, call [`GET /api/provinces.json`](/api-reference/list-provinces) first to retrieve the full list and locate the ID you need.
+</Tip>

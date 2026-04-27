@@ -1,0 +1,313 @@
+---
+title: "Usage examples: fetch Indonesian region data"
+description: "Practical code examples for fetching and navigating Indonesian region data with JavaScript, Python, and curl — from provinces down to villages."
+---
+
+This page shows real-world patterns for consuming the API across common languages and runtimes. All examples use the public hosted instance at `https://emsifa.github.io/api-wilayah-indonesia`. Replace that base URL with your own if you are [self-hosting](/self-hosting).
+
+<Tip>
+  Region data changes infrequently — new administrative boundaries are only added when the Indonesian government issues a formal decree. Cache responses in `localStorage`, a service worker, or an in-memory store to avoid redundant network requests and stay well within the [bandwidth limits](/guides/limitations).
+</Tip>
+
+## Base URL
+
+```
+https://emsifa.github.io/api-wilayah-indonesia
+```
+
+---
+
+## List regions
+
+<Tabs>
+  <Tab title="Provinces">
+    Fetch all 34 provinces in a single request.
+
+    <CodeGroup>
+      ```javascript JavaScript (fetch)
+      const BASE_URL = "https://emsifa.github.io/api-wilayah-indonesia";
+
+      async function getProvinces() {
+        const response = await fetch(`${BASE_URL}/api/provinces.json`);
+        if (!response.ok) {
+          throw new Error(`Request failed: ${response.status}`);
+        }
+        return response.json();
+      }
+
+      getProvinces().then((provinces) => {
+        provinces.forEach((p) => console.log(p.id, p.name));
+      });
+      ```
+
+      ```javascript Node.js (axios)
+      const axios = require("axios");
+
+      const BASE_URL = "https://emsifa.github.io/api-wilayah-indonesia";
+
+      async function getProvinces() {
+        const { data } = await axios.get(`${BASE_URL}/api/provinces.json`);
+        return data;
+      }
+
+      getProvinces().then((provinces) => {
+        provinces.forEach((p) => console.log(p.id, p.name));
+      });
+      ```
+
+      ```python Python (requests)
+      import requests
+
+      BASE_URL = "https://emsifa.github.io/api-wilayah-indonesia"
+
+      def get_provinces():
+          response = requests.get(f"{BASE_URL}/api/provinces.json")
+          response.raise_for_status()
+          return response.json()
+
+      for province in get_provinces():
+          print(province["id"], province["name"])
+      ```
+
+      ```bash curl
+      curl https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json
+      ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="Regencies">
+    Fetch all regencies/cities within a province by passing the province ID. This example uses province `11` (Aceh).
+
+    <CodeGroup>
+      ```javascript JavaScript (fetch)
+      const BASE_URL = "https://emsifa.github.io/api-wilayah-indonesia";
+
+      async function getRegencies(provinceId) {
+        const response = await fetch(`${BASE_URL}/api/regencies/${provinceId}.json`);
+        if (!response.ok) {
+          throw new Error(`Request failed: ${response.status}`);
+        }
+        return response.json();
+      }
+
+      // Fetch regencies for Aceh (province ID "11")
+      getRegencies("11").then((regencies) => {
+        regencies.forEach((r) => console.log(r.id, r.name));
+      });
+      ```
+
+      ```javascript Node.js (axios)
+      const axios = require("axios");
+
+      const BASE_URL = "https://emsifa.github.io/api-wilayah-indonesia";
+
+      async function getRegencies(provinceId) {
+        const { data } = await axios.get(
+          `${BASE_URL}/api/regencies/${provinceId}.json`
+        );
+        return data;
+      }
+
+      getRegencies("11").then((regencies) => {
+        regencies.forEach((r) => console.log(r.id, r.name));
+      });
+      ```
+
+      ```python Python (requests)
+      import requests
+
+      BASE_URL = "https://emsifa.github.io/api-wilayah-indonesia"
+
+      def get_regencies(province_id):
+          response = requests.get(f"{BASE_URL}/api/regencies/{province_id}.json")
+          response.raise_for_status()
+          return response.json()
+
+      for regency in get_regencies("11"):
+          print(regency["id"], regency["name"])
+      ```
+
+      ```bash curl
+      # Regencies in Aceh (province ID 11)
+      curl https://emsifa.github.io/api-wilayah-indonesia/api/regencies/11.json
+      ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="Districts & Villages">
+    Fetch districts within a regency, then villages within a district.
+
+    <CodeGroup>
+      ```javascript JavaScript (fetch)
+      const BASE_URL = "https://emsifa.github.io/api-wilayah-indonesia";
+
+      async function getDistricts(regencyId) {
+        const res = await fetch(`${BASE_URL}/api/districts/${regencyId}.json`);
+        return res.json();
+      }
+
+      async function getVillages(districtId) {
+        const res = await fetch(`${BASE_URL}/api/villages/${districtId}.json`);
+        return res.json();
+      }
+
+      // Districts in Aceh Selatan (regency ID "1103")
+      const districts = await getDistricts("1103");
+      console.log("Districts:", districts);
+
+      // Villages in Trumon (district ID "1103010")
+      const villages = await getVillages("1103010");
+      console.log("Villages:", villages);
+      ```
+
+      ```python Python (requests)
+      import requests
+
+      BASE_URL = "https://emsifa.github.io/api-wilayah-indonesia"
+
+      def get_districts(regency_id):
+          r = requests.get(f"{BASE_URL}/api/districts/{regency_id}.json")
+          r.raise_for_status()
+          return r.json()
+
+      def get_villages(district_id):
+          r = requests.get(f"{BASE_URL}/api/villages/{district_id}.json")
+          r.raise_for_status()
+          return r.json()
+
+      for district in get_districts("1103"):
+          print(district["id"], district["name"])
+
+      for village in get_villages("1103010"):
+          print(village["id"], village["name"])
+      ```
+
+      ```bash curl
+      # Districts in Aceh Selatan (regency ID 1103)
+      curl https://emsifa.github.io/api-wilayah-indonesia/api/districts/1103.json
+
+      # Villages in Trumon (district ID 1103010)
+      curl https://emsifa.github.io/api-wilayah-indonesia/api/villages/1103010.json
+      ```
+    </CodeGroup>
+  </Tab>
+</Tabs>
+
+---
+
+## Single region lookup
+
+<Tabs>
+  <Tab title="By ID">
+    Look up any single region directly by its ID without fetching the full list.
+
+    <CodeGroup>
+      ```javascript JavaScript (fetch)
+      const BASE_URL = "https://emsifa.github.io/api-wilayah-indonesia";
+
+      async function getRegion(level, id) {
+        // level: "province" | "regency" | "district" | "village"
+        const res = await fetch(`${BASE_URL}/api/${level}/${id}.json`);
+        if (!res.ok) throw new Error(`Not found: ${level}/${id}`);
+        return res.json();
+      }
+
+      // Look up province 11 (Aceh)
+      const province = await getRegion("province", "11");
+      console.log(province); // { id: "11", name: "ACEH" }
+
+      // Look up regency 1103 (Aceh Selatan)
+      const regency = await getRegion("regency", "1103");
+      console.log(regency);
+      ```
+
+      ```python Python (requests)
+      import requests
+
+      BASE_URL = "https://emsifa.github.io/api-wilayah-indonesia"
+
+      def get_region(level, region_id):
+          """level: 'province', 'regency', 'district', or 'village'"""
+          r = requests.get(f"{BASE_URL}/api/{level}/{region_id}.json")
+          r.raise_for_status()
+          return r.json()
+
+      print(get_region("province", "11"))
+      # {'id': '11', 'name': 'ACEH'}
+
+      print(get_region("regency", "1103"))
+      # {'id': '1103', 'province_id': '11', 'name': 'KABUPATEN ACEH SELATAN'}
+      ```
+
+      ```bash curl
+      # Province: Aceh
+      curl https://emsifa.github.io/api-wilayah-indonesia/api/province/11.json
+
+      # Regency: Aceh Selatan
+      curl https://emsifa.github.io/api-wilayah-indonesia/api/regency/1103.json
+
+      # District: Trumon
+      curl https://emsifa.github.io/api-wilayah-indonesia/api/district/1103010.json
+
+      # Village: Kuta Padang
+      curl https://emsifa.github.io/api-wilayah-indonesia/api/village/1103010001.json
+      ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="Full traversal">
+    Traverse the entire hierarchy from a known province down to its villages using Node.js.
+
+    <CodeGroup>
+      ```javascript Node.js (axios)
+      const axios = require("axios");
+
+      const BASE_URL = "https://emsifa.github.io/api-wilayah-indonesia";
+
+      async function get(path) {
+        const { data } = await axios.get(`${BASE_URL}${path}`);
+        return data;
+      }
+
+      async function traverseHierarchy(provinceId) {
+        const province = await get(`/api/province/${provinceId}.json`);
+        console.log("Province:", province.name);
+
+        const regencies = await get(`/api/regencies/${provinceId}.json`);
+        for (const regency of regencies.slice(0, 2)) {
+          console.log("  Regency:", regency.name);
+
+          const districts = await get(`/api/districts/${regency.id}.json`);
+          for (const district of districts.slice(0, 2)) {
+            console.log("    District:", district.name);
+
+            const villages = await get(`/api/villages/${district.id}.json`);
+            villages.slice(0, 2).forEach((v) => {
+              console.log("      Village:", v.name);
+            });
+          }
+        }
+      }
+
+      traverseHierarchy("11");
+      ```
+
+      ```bash curl
+      # Step 1 — fetch the province
+      curl https://emsifa.github.io/api-wilayah-indonesia/api/province/11.json
+
+      # Step 2 — fetch regencies in Aceh
+      curl https://emsifa.github.io/api-wilayah-indonesia/api/regencies/11.json
+
+      # Step 3 — fetch districts in Aceh Selatan (1103)
+      curl https://emsifa.github.io/api-wilayah-indonesia/api/districts/1103.json
+
+      # Step 4 — fetch villages in Trumon (1103010)
+      curl https://emsifa.github.io/api-wilayah-indonesia/api/villages/1103010.json
+
+      # Step 5 — inspect a single village directly
+      curl https://emsifa.github.io/api-wilayah-indonesia/api/village/1103010001.json
+      ```
+    </CodeGroup>
+  </Tab>
+</Tabs>

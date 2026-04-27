@@ -1,0 +1,77 @@
+---
+title: "API limits and bandwidth considerations"
+description: "GitHub Pages imposes a 100 GB/month bandwidth cap on the shared API instance. Learn the limits and how self-hosting removes them for your use case."
+---
+
+Because this API is a collection of static JSON files served from GitHub Pages, it inherits every constraint that GitHub imposes on Pages sites. For light use — prototypes, internal tools, or low-traffic applications — the shared hosted instance works well. For anything production-grade or at scale, you should host the API yourself.
+
+<Warning>
+  The public instance at `https://emsifa.github.io/api-wilayah-indonesia` is a **shared resource**. Bandwidth consumed by one consumer reduces what is available to everyone else. Do not use it as the primary data source for a high-traffic production service.
+</Warning>
+
+## Bandwidth limit
+
+GitHub Pages enforces a **100 GB per month** bandwidth cap per site.
+
+Most individual API endpoints are plain JSON files under 1 KB. Using 1 KB as a conservative average:
+
+| Metric                       | Value                             |
+|------------------------------|-----------------------------------|
+| Bandwidth cap                | 100 GB / month                    |
+| Average response size        | ~1 KB per endpoint                |
+| Estimated monthly capacity   | ~100,000,000 requests / month     |
+| Estimated daily capacity     | ~3,000,000 requests / day         |
+
+These are ceiling estimates. In practice, list endpoints (e.g., all villages in a district) are larger than 1 KB, so effective request capacity is lower. The daily headroom is also shared across every consumer hitting the same GitHub Pages URL.
+
+<Info>
+  For the full breakdown of GitHub Pages constraints — including repository size limits and prohibited use cases — see the [official GitHub Pages usage limits](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages#usage-limits).
+</Info>
+
+## Self-hosting
+
+The most reliable way to remove bandwidth constraints is to fork the repository and deploy your own instance to GitHub Pages or any other static file host. Your fork's bandwidth allowance is entirely independent of the shared instance.
+
+See the [self-hosting guide](/self-hosting) for step-by-step instructions.
+
+## Best practices for staying within limits
+
+Follow these guidelines when using the public hosted instance:
+
+<Steps>
+  <Step title="Cache responses client-side">
+    Store fetched JSON in `localStorage`, IndexedDB, or an in-memory cache keyed by endpoint URL. Region data only changes when the Indonesian government announces new administrative boundaries — re-fetching on every page load is unnecessary.
+  </Step>
+
+  <Step title="Request only what you need">
+    Fetch a specific list (e.g., `/api/regencies/11.json`) rather than fetching the full hierarchy upfront. Each level's data is only needed once the user has selected the parent region.
+  </Step>
+
+  <Step title="Avoid polling">
+    Do not set up interval-based polling to keep data fresh. There is no webhook or change-notification mechanism; data is static between releases. A single fetch per session (or per deployment of your app) is sufficient.
+  </Step>
+
+  <Step title="Bundle data for offline-first apps">
+    If your application ships to end users who need region data without a network connection, copy the generated JSON files into your application bundle at build time rather than fetching them at runtime.
+  </Step>
+</Steps>
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="What happens if the bandwidth limit is hit?">
+    GitHub will temporarily disable the Pages site until the monthly bandwidth counter resets. During that window, all requests to the public hosted instance will fail with a `404` or a GitHub error page. There is no graceful degradation — the entire site goes offline. Self-hosting your own fork eliminates this shared risk.
+  </Accordion>
+
+  <Accordion title="Is there an SLA for the hosted API?">
+    No. The public instance is a community resource with no uptime guarantee, no support contract, and no incident communication channel. GitHub's own Pages infrastructure has documented availability, but the project itself makes no commitments on top of that. For any workload that requires reliability guarantees, self-host the API.
+  </Accordion>
+
+  <Accordion title="Can I use this in production?">
+    It depends on your traffic volume and tolerance for downtime. Small internal tools, low-traffic public sites, and personal projects are generally fine. High-traffic consumer applications, e-commerce checkouts, and anything with an SLA should use a self-hosted instance so that bandwidth is dedicated and availability is under your control.
+  </Accordion>
+
+  <Accordion title="Does the API rate-limit individual clients?">
+    GitHub Pages does not enforce per-IP or per-client rate limits — only the aggregate monthly bandwidth cap applies. However, GitHub reserves the right to disable sites that violate their terms of service or generate abusive traffic patterns.
+  </Accordion>
+</AccordionGroup>
